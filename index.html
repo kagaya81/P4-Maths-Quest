@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P4 Maths Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: cheerful, encouraging game hub for a Primary 4 child
+   IDEA: a map of worlds; each maths topic is a place (a rounding hill, a factor garden)
+   PICTURE: each world drawn as a little landscape; in play, the thing itself (hill, tiles, beds) is the picture
+   COLOUR and TYPE: sky blue ground, grass green, orange accent; Fredoka display + Nunito body
+   LAYOUT: points header, world cards, world page with Learn / Play, one centred game card */
+:root{color-scheme:light dark;
+--bg:light-dark(#e6f6ff,#0a1424);--card:light-dark(#ffffff,#13223a);--ink:light-dark(#14263a,#eaf2fb);--mute:light-dark(#4a5f76,#a8b8cc);
+--line:light-dark(#cfe3f2,#2a3d58);--sky:light-dark(#bfe7ff,#132a4d);--sun:light-dark(#ffd23f,#efeed2);--cloud:light-dark(#ffffff,#25406a);
+--far:light-dark(#9fd8a8,#1d3d45);--hill:light-dark(#46ad4b,#2a7d39);--soil:light-dark(#9b6a45,#5e3d27);--acc:light-dark(#ff7a1a,#ff9e45);--accInk:light-dark(#b34d00,#ffb46e);
+--good:light-dark(#157f3e,#62d68e);--goodBg:light-dark(#e3f7ea,#133524);--bad:light-dark(#c62f3a,#ff8189);--badBg:light-dark(#fdeaec,#3a1b22);
+--dc:light-dark(#ffe15c,#806300);--ma:light-dark(#bfeccb,#1f5a33);--mb:light-dark(#c5ddff,#24406e);--flL:#2f7fe0;--flH:#e8445a}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-family:Fredoka,Nunito,sans-serif;font-weight:600;line-height:1.08;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(28px,5vw,40px)}h2{font-size:24px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px max(4vw,16px);background:var(--card);border-bottom:2px solid var(--line)}
+.brand{display:flex;gap:10px;align-items:center;font:600 24px Fredoka,sans-serif;border:0;background:none;padding:4px 0;min-height:44px}
+.me{display:flex;gap:14px;align-items:center}
+.rank{display:grid;gap:2px;font-size:14px;text-align:right}.rank b{font:600 16px Fredoka,sans-serif}.rank small{color:var(--mute);font-size:13px}
+.bar{display:block;width:120px;height:8px;border-radius:9px;background:var(--line);overflow:hidden;justify-self:end}.bar i{display:block;height:100%;background:var(--acc);border-radius:9px}
+.pts{background:var(--acc);color:#fff;font:700 20px Fredoka,sans-serif;padding:8px 16px;border-radius:99px;white-space:nowrap;font-variant-numeric:tabular-nums}
+main{max-width:880px;margin:0 auto;padding:22px max(3vw,12px) 48px}
+.hello{font-size:clamp(32px,6vw,48px)}
+.lead{color:var(--mute);margin:0 0 16px;max-width:62ch}
+.worlds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px}
+.wcard{display:grid;align-content:start;text-align:left;border:3px solid transparent;padding:0;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 6px 0 var(--line)}
+.wcard:hover{border-color:var(--acc)}.wcard>svg{width:100%;height:auto;display:block}
+.wbody{padding:14px 18px 18px;display:grid;gap:4px}.wname{font:600 24px Fredoka,sans-serif}.wtop{color:var(--mute);font-size:15px}
+.wstars{display:flex;align-items:center;gap:6px;font-weight:800;font-size:14px;margin-top:6px}
+.soon{border:3px dashed var(--line);border-radius:24px;display:grid;place-items:center;padding:24px;color:var(--mute);text-align:center;min-height:200px;font:600 20px Fredoka,sans-serif}
+.foot{display:flex;justify-content:flex-end;margin-top:18px}
+.wnav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-bottom:16px}.wnav h1{margin:0;flex:1 1 220px}
+.sub{display:flex;gap:4px;background:var(--card);padding:4px;border-radius:99px}
+.sub button{border:0;background:none;font:600 18px Fredoka,sans-serif;padding:8px 22px;border-radius:99px;min-height:44px;color:var(--mute)}.sub .on{background:var(--ink);color:var(--bg)}
+.card{background:var(--card);border-radius:24px;padding:clamp(18px,4vw,34px);box-shadow:0 6px 0 var(--line)}
+.card+.card,.card+.steps,.steps+.center{margin-top:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{border:2px solid var(--line);background:transparent;border-radius:99px;padding:8px 14px;min-height:44px;font-weight:700;font-size:15px}
+.chip.on{border-color:var(--acc);background:var(--acc);color:#fff}
+.lab{font-weight:800;font-size:14px;color:var(--mute);margin:6px 0 6px}
+.bignum{font:700 clamp(42px,10vw,68px)/1.1 Fredoka,sans-serif;text-align:center;letter-spacing:.02em;font-variant-numeric:tabular-nums;margin:6px 0 10px}
+.bignum.sm{font-size:clamp(30px,7vw,50px)}
+.pl{text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:.12em;text-underline-offset:.12em;color:var(--accInk)}
+.dc{background:var(--dc);border-radius:.18em;padding:0 .06em}
+.hill{border-radius:18px;overflow:hidden;line-height:0}.hill svg{width:100%;height:auto;display:block}
+.s-sky{fill:var(--sky)}.s-sun{fill:var(--sun)}.s-cloud{fill:var(--cloud)}.s-far{fill:var(--far)}.s-hill{fill:var(--hill)}.s-soil{fill:var(--soil)}
+.s-line{stroke:#fff;stroke-width:3;stroke-linecap:round}.s-dash{stroke:#fff;stroke-width:2.5;stroke-dasharray:6 7;opacity:.85}
+.s-pole{stroke:light-dark(#5b4630,#d9c7ae);stroke-width:4;stroke-linecap:round}.s-fl{fill:var(--flL)}.s-fh{fill:var(--flH)}
+.s-txt{font:600 27px Fredoka,sans-serif;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--sky);stroke-width:7px;stroke-linejoin:round}
+.win .s-txt{fill:var(--accInk);font-size:33px}
+.s-half{font:700 21px Fredoka,sans-serif;fill:#fff;text-anchor:middle}
+.s-ball{fill:var(--acc);stroke:#fff;stroke-width:3}.s-shine{fill:#fff;opacity:.7}.gone{opacity:0}
+.s-plant{fill:light-dark(#6fdc6f,#7fe08a)}.s-stone{fill:light-dark(#e9eef2,#3a4c66)}.s-stxt{font:700 22px Fredoka,sans-serif;fill:var(--ink);text-anchor:middle}
+input[type=range]{width:100%;margin:12px 0 4px;accent-color:var(--acc);height:44px}
+.say{margin:6px 0 0;padding:14px 16px;border-radius:14px;background:var(--bg)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.step{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 4px 0 var(--line)}
+.step .n{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 18px Fredoka,sans-serif;margin-bottom:8px}
+.step h2{font-size:21px;margin:0 0 4px}.step p{margin:0;color:var(--mute);font-size:16px}
+.go{border:0;background:var(--acc);color:#fff;font:600 20px Fredoka,sans-serif;padding:12px 26px;border-radius:99px;min-height:52px;box-shadow:0 4px 0 light-dark(#c55600,#a85a14)}
+.go:active{transform:translateY(3px);box-shadow:0 1px 0 light-dark(#c55600,#a85a14)}.go:disabled{opacity:.5}
+.ghost{border:2px solid var(--line);background:transparent;font-weight:700;padding:10px 18px;border-radius:99px;min-height:48px}.ghost:disabled{opacity:.5;cursor:default}
+.center{text-align:center}
+.tog{display:flex;gap:10px;align-items:center;font-weight:700;margin:4px 0 18px;min-height:44px}.tog input{width:22px;height:22px;accent-color:var(--acc)}
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.lv{display:grid;gap:4px;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:20px;padding:18px;box-shadow:0 4px 0 var(--line)}
+.lv:hover{border-color:var(--acc)}.lvn{font:600 22px Fredoka,sans-serif}.lve{color:var(--mute);font-size:15px}.lvs{display:flex;gap:3px;margin-top:6px}
+.lv.boss{background:var(--ink);color:var(--bg);border-color:var(--ink)}.lv.boss .lve{color:inherit;opacity:.8}
+.gbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.link{border:0;background:none;font-weight:800;color:var(--mute);min-height:44px;padding:0 4px}
+.dots{display:flex;gap:6px}.dots i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.dots i.now{background:var(--ink)}.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}
+.gstat{display:flex;gap:10px;font-weight:800;font-size:15px}.gstat span{background:var(--bg);padding:6px 12px;border-radius:99px;white-space:nowrap}.gstat .hot{background:var(--acc);color:#fff}
+.ask{text-align:center;font-size:20px;margin:4px 0 0;text-wrap:balance}
+.ask.lg{font:600 clamp(21px,3.6vw,27px)/1.35 Fredoka,sans-serif;margin:14px auto 6px;max-width:34ch}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.opt{position:relative;border:3px solid var(--line);background:var(--card);border-radius:18px;min-height:66px;padding:8px 10px;font:600 clamp(20px,5vw,28px) Fredoka,sans-serif;font-variant-numeric:tabular-nums;box-shadow:0 4px 0 var(--line)}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt kbd{position:absolute;left:10px;top:6px;font:700 12px Nunito,sans-serif;color:var(--mute)}
+.opt.right{border-color:var(--good);background:var(--goodBg);color:var(--good)}.opt.wrong{border-color:var(--bad);background:var(--badBg);color:var(--bad)}.opt:disabled{cursor:default}
+.tf{display:flex;gap:10px;margin-top:16px}
+.tf3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.tf3 .go{grid-column:1/-1;justify-self:center}
+.tf input,.tf3 input{flex:1;width:100%;font:600 26px Fredoka,sans-serif;padding:10px 14px;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);min-height:58px;text-align:center}
+input.right{border-color:var(--good)!important;background:var(--goodBg)!important}input.wrong{border-color:var(--bad)!important;background:var(--badBg)!important}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px;margin-top:16px}
+.tile{min-height:54px;border:3px solid var(--line);background:var(--card);border-radius:14px;font:600 22px Fredoka,sans-serif;font-variant-numeric:tabular-nums}
+.tile.sel{border-color:var(--acc);background:var(--acc);color:#fff}
+.tile.right{border-color:var(--good);background:var(--good);color:#fff}.tile.wrong{border-color:var(--bad);background:var(--badBg);color:var(--bad);text-decoration:line-through}
+.tile.missed{border-style:dashed;border-color:var(--good);color:var(--good)}.tile:disabled{cursor:default}
+.tnote{text-align:center;color:var(--mute);font-size:14px;margin:8px 0 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+.fb{margin-top:16px;border-radius:18px}.fb:empty{display:none}
+.fb.good,.fb.bad,.fb.hint{padding:16px 18px}.fb.good{background:var(--goodBg)}.fb.bad{background:var(--badBg)}.fb.hint{background:var(--bg)}
+.fb p{margin:0 0 10px}.verdict{font:600 22px Fredoka,sans-serif}.fb.good .verdict{color:var(--good)}.fb.bad .verdict{color:var(--bad)}
+.end{text-align:center}.bigstars{display:flex;justify-content:center;gap:10px;margin:8px 0 18px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:480px;margin:0 auto}
+.stats div{background:var(--bg);border-radius:16px;padding:12px 6px;display:grid}.stats b{font:700 28px Fredoka,sans-serif}.stats span{color:var(--mute);font-size:14px}
+.newrank{font:600 22px Fredoka,sans-serif;color:var(--accInk);margin-top:16px}
+.review{list-style:none;padding:0;margin:0 auto;max-width:520px;text-align:left}
+.review li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.review b{white-space:nowrap}
+.small{color:var(--mute);font-size:14px;margin:0}
+.numpick{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0}
+.numpick output{font:700 64px/1 Fredoka,sans-serif;min-width:2.2ch;text-align:center}
+.rbtn{width:54px;height:54px;border-radius:50%;border:3px solid var(--line);background:var(--card);font:700 28px Fredoka,sans-serif}
+.beds{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:center;margin:14px 0}
+.bed{margin:0;display:grid;gap:6px;justify-items:center;font:600 17px Fredoka,sans-serif}.bed svg{display:block;max-width:100%;height:auto}
+.g100{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin:12px 0}
+.g100 span{aspect-ratio:1;display:grid;place-items:center;border-radius:8px;background:var(--bg);font:600 clamp(11px,2.4vw,16px) Fredoka,sans-serif;color:var(--mute)}
+.g100 .a{background:var(--ma);color:var(--ink)}.g100 .b{background:var(--mb);color:var(--ink)}.g100 .ab{background:var(--acc);color:#fff;font-weight:700}
+.key{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;font-weight:700}.key i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+@media(max-width:600px){.me{width:100%;justify-content:space-between}.rank{text-align:left}.bar{justify-self:start}.opt{min-height:60px}.g100{gap:2px}}
+
+.colsum{display:inline-grid;justify-items:end;font:700 clamp(34px,8vw,52px)/1.15 Fredoka,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.colsum b{margin-right:.35em;color:var(--accInk)}.colsum .rule{justify-self:stretch;height:4px;background:var(--ink);border-radius:2px;margin:6px 0}
+.cq{color:var(--mute)}.ca{color:var(--good)}
+.cgrid{display:inline-grid;font:700 clamp(30px,7vw,46px)/1.3 Fredoka,sans-serif;font-variant-numeric:tabular-nums;margin:6px auto 4px;text-align:center}
+.cgrid span{text-align:center;border-radius:8px}.cgrid .cl{font:800 12px/2 Nunito,sans-serif;color:var(--mute)}
+.cgrid .cc{font-size:.45em;line-height:1.6;color:var(--accInk);align-self:end}.cgrid .cop{color:var(--accInk)}
+.cgrid .cur{background:var(--dc)}.cgrid .old{text-decoration:line-through;color:var(--mute)}.cgrid .cans{color:var(--good)}
+.crule{grid-column:1/-1;height:4px;background:var(--ink);border-radius:2px;margin:4px 0}
+.bx{display:grid;gap:6px;max-width:560px;margin:8px auto}.bxh,.bxr{display:grid;grid-template-columns:3.2em 3fr 2fr;gap:6px;align-items:stretch}
+.bxh span{text-align:center;font:600 20px Fredoka,sans-serif;color:var(--mute)}.bxl{display:grid;place-items:center;font:600 22px Fredoka,sans-serif}
+.bxa,.bxb{display:grid;place-items:center;text-align:center;border-radius:14px;padding:16px 6px;font-size:15px;font-weight:700}.bxa{background:var(--ma)}.bxb{background:var(--mb)}
+.bxa b,.bxb b{display:block;font:700 clamp(20px,4vw,28px) Fredoka,sans-serif}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="brand" data-go="home"><svg width="34" height="28" viewBox="0 0 34 28" aria-hidden="true"><path d="M1 27 L13 6 L20 17 L24 11 L33 27Z" fill="#46ad4b"/><circle cx="13" cy="5" r="4" fill="#ff7a1a"/></svg>P4 Maths Quest</button>
+  <div class="me"><div class="rank" id="rank"></div><div class="pts"><span id="pts">0</span> pts</div></div>
+</header>
+<main>
+<section id="home">
+  <h1 class="hello">Hi there! Where shall we explore?</h1>
+  <p class="lead">Practice games for Singapore Primary 4 maths. Each world is a topic. Learn how it works, then take on the challenges to win points, stars and new ranks. All your points add up together.</p>
+  <div class="worlds" id="worlds"></div>
+  <div class="foot"><button class="link" id="reset">Reset points</button></div>
+</section>
+<section id="world" hidden>
+  <div class="wnav"><button class="link" data-go="home">← All worlds</button><h1 id="wname"></h1>
+    <div class="sub"><button data-sub="learn">Learn</button><button data-sub="play">Play</button></div></div>
+  <div id="learnBox"></div>
+  <div id="playBox" hidden><div class="card">
+    <h2>Pick your challenge</h2>
+    <p class="lead">Ten questions each round. Get 5 right for one star, 7 for two, 9 for three. Answer in a row to build a streak and earn bonus points.</p>
+    <div id="typBox"></div>
+    <div class="levels" id="levels"></div>
+  </div></div>
+</section>
+<section id="game" hidden></section>
+<section id="end" hidden></section>
+</main>
+<script>
+{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY='p4MathsQuest1';
+let S={pts:0,best:{}};
+try{
+  const s=JSON.parse(localStorage.getItem(KEY));
+  if(s&&typeof s.pts==='number')S={pts:s.pts,best:s.best||{}};
+  else{const o=JSON.parse(localStorage.getItem('roundingMountain1'));if(o&&typeof o.pts==='number'){S.pts=o.pts;for(const k in (o.best||{}))S.best['round:'+k]=o.best[k]}}
+}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const RANKS=[[0,'Pebble'],[100,'Explorer'],[300,'Adventurer'],[600,'Trailblazer'],[1000,'Summit star'],[1600,'Maths champion'],[2500,'Maths legend']];
+const rankOf=p=>{let r=0;RANKS.forEach((x,i)=>{if(p>=x[0])r=i});return r};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const list=a=>a.join(', ');
+const star=(on,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8L12 17.5l-6.1 3.5 1.5-6.8-5.2-4.7 6.9-.7z" fill="${on?'var(--acc)':'none'}" stroke="var(--acc)" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+
+/* ================= ROUNDING MOUNTAIN ================= */
+const fmt=(n,dp,ad)=>{const[a,b]=(n/10**dp).toFixed(ad).split('.');return a.replace(/\B(?=(\d{3})+(?!\d))/g,',')+(b!==undefined?'.'+b:'')};
+const F=(q,n)=>fmt(n,q.dp,q.ad);
+const PLACE={'-2':'hundredths','-1':'tenths','0':'ones','1':'tens','2':'hundreds','3':'thousands','4':'ten thousands'};
+const RLV=[
+ {id:'ten',name:'Nearest 10',lab:'10',ex:'4,372 → 4,370',vars:[{dp:0,u:10,a:11,b:9999}],ad:0},
+ {id:'hun',name:'Nearest 100',lab:'100',ex:'4,372 → 4,400',vars:[{dp:0,u:100,a:101,b:99999}],ad:0},
+ {id:'tho',name:'Nearest 1,000',lab:'1,000',ex:'26,512 → 27,000',vars:[{dp:0,u:1000,a:1001,b:99999}],ad:0},
+ {id:'whole',name:'Nearest whole number',lab:'whole number',ex:'7.6 → 8',vars:[{dp:1,u:10,a:11,b:999},{dp:2,u:100,a:101,b:9999}],ad:0},
+ {id:'tenth',name:'Nearest tenth',lab:'tenth (1 decimal place)',ex:'3.47 → 3.5',vars:[{dp:2,u:10,a:101,b:9999}],ad:1},
+ {id:'mix',name:'Mountain mix',ex:'All five kinds, shuffled. The boss climb!',mix:true}
+];
+const LB={ten:{u:10,dp:0,ad:0,low:4370},hun:{u:100,dp:0,ad:0,low:4300},tho:{u:1000,dp:0,ad:0,low:26000},whole:{u:10,dp:1,ad:0,low:70},tenth:{u:10,dp:2,ad:1,low:340}};
+function RQ(v,u,dp,ad,lab){const low=Math.floor(v/u)*u,high=low+u;return{v,u,dp,ad,lab,low,high,ans:(v-low)*2>=u?high:low}}
+function ropts(q){
+  const A=F(q,q.ans),out=[];
+  for(const n of [q.low,q.high,q.high+q.u,q.low-q.u,RQ(q.v,q.u*10,q.dp,q.ad).ans,q.high+2*q.u]){if(n<0)continue;const s=F(q,n);if(s!==A&&!out.includes(s))out.push(s)}
+  return shuffle([A,...out.slice(0,3)])
+}
+function genR(L){
+  const V=pick(L.vars),u=V.u;let v=rnd(V.a,V.b);const r=Math.random();
+  if(r<.2)v=Math.floor(v/u)*u+u/2;
+  else if(r<.35){const B=u*10;v=Math.floor(v/B)*B+9*u+rnd(u/2,u-1)}
+  if(v%u===0)v+=rnd(1,u-1);
+  if(v<u)v+=u;
+  const q=RQ(v,u,V.dp,L.ad,L.lab);q.opts=ropts(q);return q
+}
+function numHTML(q,hl){
+  const s=String(q.v).padStart(q.dp+1,'0'),I=s.slice(0,s.length-q.dp),Fr=s.slice(s.length-q.dp);
+  const pl=Math.round(Math.log10(q.u))-q.dp;
+  const w=(d,p)=>hl&&p===pl?`<span class="pl">${d}</span>`:hl&&p===pl-1?`<span class="dc">${d}</span>`:d;
+  let h='';
+  for(let i=0;i<I.length;i++){const p=I.length-1-i;h+=w(I[i],p);if(p>0&&p%3===0)h+=','}
+  if(q.dp){h+='.';for(let j=0;j<Fr.length;j++)h+=w(Fr[j],-(j+1))}
+  return h
+}
+function rexp(q){
+  const pl=Math.round(Math.log10(q.u))-q.dp,name=PLACE[pl],pd=Math.floor(q.v/q.u)%10,d=Math.floor(q.v/(q.u/10))%10,up=q.ans===q.high,half=(q.v-q.low)*2===q.u;
+  let t=`Nearest ${q.lab}: find the <b>${name}</b> digit <span class="pl">${pd}</span>, then look at the digit on its right, <span class="dc">${d}</span>. `;
+  t+=up?`${d} is 5 or more, so round <b>up</b>${pd===9?'. The 9 becomes 10, so 1 carries over to the next place':''}. `:`${d} is 4 or less, so round <b>down</b>: the ${name} digit stays ${pd}. `;
+  if(half)t+='It sits exactly on top of the hill, and the rule says halfway rolls forward. ';
+  return t+`${numHTML(q,false)} is between ${F(q,q.low)} and ${F(q,q.high)}, so it rounds to <b>${F(q,q.ans)}</b>.`
+}
+const pos=t=>[60+480*t,210-140*Math.sin(Math.PI*t)-17];
+function hill(q,o){
+  const P=[];for(let i=0;i<=40;i++){const t=i/40;P.push((60+480*t).toFixed(1)+','+(210-140*Math.sin(Math.PI*t)).toFixed(1))}
+  const lo=o.reveal?F(q,q.low):'?',hi=o.reveal?F(q,q.high):'?';
+  let ticks='';for(let i=0;i<=10;i++){const x=60+48*i;ticks+=`<line x1="${x}" y1="${i%5?238:231}" x2="${x}" y2="252" class="s-line"/>`}
+  const flag=(x,lab,c,w)=>{const dx=x<300?36:-36;return`<g class="flag${w?' win':''}"><line x1="${x}" y1="212" x2="${x}" y2="124" class="s-pole"/><path d="M${x},124 L${x+dx},135 L${x},146Z" class="${c}"/><text x="${x<300?Math.max(x,58):Math.min(x,542)}" y="108" class="s-txt">${lab}</text></g>`};
+  const g=o.ball?'':' class="gone"';
+  return`<svg viewBox="0 0 600 290" role="img" aria-label="A hill between ${lo} and ${hi}">
+<rect width="600" height="290" class="s-sky"/><circle cx="455" cy="44" r="22" class="s-sun"/>
+<g class="s-cloud"><ellipse cx="150" cy="46" rx="40" ry="14"/><ellipse cx="176" cy="36" rx="24" ry="14"/><ellipse cx="560" cy="64" rx="30" ry="10"/></g>
+<path d="M0,290 L0,190 L70,150 L150,185 L230,140 L300,170 L380,130 L470,175 L540,150 L600,175 L600,290Z" class="s-far"/>
+<path d="M0,290 L0,212 L${P.join(' L')} L600,212 L600,290Z" class="s-hill"/>
+<line x1="300" y1="74" x2="300" y2="245" class="s-dash"/><line x1="60" y1="245" x2="540" y2="245" class="s-line"/>${ticks}
+${o.reveal?`<text x="300" y="278" class="s-half">halfway ${fmt(q.low+q.u/2,q.dp,q.dp)}</text>`:''}
+${flag(60,lo,'s-fl',o.win==='low')}${flag(540,hi,'s-fh',o.win==='high')}
+<g id="${o.id}m"${g}><path d="M-8,229 L8,229 L0,242Z" class="s-ball"/></g>
+<g id="${o.id}b"${g}><circle r="15" class="s-ball"/><circle cx="-5" cy="-5" r="4" class="s-shine"/></g></svg>`
+}
+function setBall(id,t){const[x,y]=pos(t),b=document.getElementById(id+'b'),m=document.getElementById(id+'m');if(b)b.setAttribute('transform',`translate(${x},${y})`);if(m)m.setAttribute('transform',`translate(${x},0)`)}
+function roll(id,a,z,done){
+  if(RM||a===z){setBall(id,z);done&&done();return}
+  const t0=performance.now(),D=700+500*Math.abs(z-a);
+  const f=now=>{const k=Math.min(1,(now-t0)/D);setBall(id,a+(z-a)*k*k);if(k<1)requestAnimationFrame(f);else done&&done()};
+  requestAnimationFrame(f)
+}
+let TYPE=false;
+function roundQ(L){
+  if(L.mix)L=pick(RLV.slice(0,5));
+  const r=genR(L),t=(r.v-r.low)/r.u,z=r.ans===r.high?1:0;
+  return{key:'r'+r.v+'|'+r.u+'|'+r.dp,kind:TYPE?'num':'mcq',ask:`Round to the nearest <b>${r.lab}</b>`,
+    big:st=>numHTML(r,st!=='pre'),vis:st=>hill(r,{id:'g',reveal:st!=='pre',ball:st!=='pre'}),
+    place:st=>{if(st!=='pre')setBall('g',t)},
+    after:()=>roll('g',t,z,()=>{const f=$$('#gvis .flag')[z];f&&f.classList.add('win')}),
+    opts:r.opts,answer:TYPE?r.ans/10**r.dp:F(r,r.ans),ansText:F(r,r.ans),explain:rexp(r),pts:TYPE?20:10,
+    hint:'Look at the yellow digit. Is it 5 or more? Which flag is the ball rolling towards?',hintLabel:'Show me the hill',
+    review:`${numHTML(r,false)} to the nearest ${r.lab}`}
+}
+let LL='hun';
+const roundLearn=()=>`<div class="card">
+  <h1>Which flag is closer?</h1>
+  <p class="lead">Every number sits on a hill between two round numbers. If it is below halfway it rolls back to the lower flag. If it is halfway or past it, it rolls forward to the higher flag. Drag the slider and watch.</p>
+  <div class="chips" id="lchips"></div>
+  <div class="bignum" id="lnum"></div>
+  <div class="hill" id="lhill"></div>
+  <input type="range" id="lslide" aria-label="Move the number along the hill">
+  <p class="say" id="lsay"></p></div>
+<div class="steps">
+  <div class="step"><span class="n">1</span><h2>Find the place</h2><p>Rounding to the nearest 100? Find the hundreds digit. It's <span class="pl">underlined</span>.</p></div>
+  <div class="step"><span class="n">2</span><h2>Look right</h2><p>Check the digit just to its right, the <span class="dc">decider</span>.</p></div>
+  <div class="step"><span class="n">3</span><h2>0–4 down, 5–9 up</h2><p>4 or less: keep the digit. 5 or more: add 1 to it. The digits after it become 0, or drop off after a decimal point.</p></div>
+</div>
+<div class="center"><button class="go" data-sub="play">I'm ready, let's play</button></div>`;
+function setLearn(id){
+  LL=id;const b=LB[id],sl=$('#lslide');sl.min=1;sl.max=b.u-1;sl.step=1;sl.value=Math.round(b.u*.37);
+  $('#lchips').innerHTML=RLV.slice(0,5).map(l=>`<button class="chip${l.id===LL?' on':''}" data-l="${l.id}">${l.name}</button>`).join('');
+  drawLearn()
+}
+function drawLearn(){
+  const b=LB[LL],L=RLV.find(l=>l.id===LL),q=RQ(b.low+ +$('#lslide').value,b.u,b.dp,b.ad,L.lab);
+  $('#lnum').innerHTML=numHTML(q,true);
+  $('#lhill').innerHTML=hill(q,{id:'l',reveal:true,ball:true,win:q.ans===q.high?'high':'low'});
+  setBall('l',(q.v-q.low)/q.u);$('#lsay').innerHTML=rexp(q)
+}
+function roundInit(){setLearn(LL);$('#lslide').addEventListener('input',drawLearn)}
+
+/* ================= FACTOR GARDEN ================= */
+const FAC=n=>{const a=[];for(let i=1;i<=n;i++)if(n%i===0)a.push(i);return a};
+const C=n=>FAC(n).length;
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b;
+const PAIRS=n=>{const p=[];for(let i=1;i*i<=n;i++)if(n%i===0)p.push([i,n/i]);return p};
+const pairText=n=>PAIRS(n).map(([a,b])=>`${a} × ${b}`).join(', ');
+const sumF=n=>FAC(n).reduce((s,x)=>s+x,0);
+const mults=(k,upto)=>{const a=[];for(let x=k;x<=upto;x+=k)a.push(x);return a};
+const OW=['','first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
+const SMALL=[6,8,10,12,14,15,16,18,20,21,24,26,27,28,30];
+const BIG=[32,36,40,42,45,48,50,54,56,60,63,64,72,75,80,84,90,96,100];
+const PRIMES=[13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
+const COMP=[...SMALL,...BIG];
+function mcq(o){
+  const A=String(o.answer),d=[...new Set(o.wrong.map(String))].filter(x=>x!==A);
+  return Object.assign(o,{kind:'mcq',answer:A,ansText:o.ansText||A,opts:shuffle([A,...shuffle(d).slice(0,3)]),pts:10})
+}
+const nearNon=(n,f)=>{const s=new Set();f.forEach(v=>{[v-1,v+1,v+2].forEach(x=>{if(x>1&&x<n&&n%x)s.add(x)})});for(let x=n+1;s.size<3;x++)s.add(x);return[...s]};
+
+function gAll(){
+  const r=Math.random(),n=pick(r<.2?PRIMES:r<.55?SMALL:BIG),f=FAC(n);
+  let tiles;
+  if(n<=30)tiles=Array.from({length:n},(_,i)=>i+1);
+  else{const s=new Set(f),want=Math.min(20,Math.max(12,f.length+7));let g=0;while(s.size<want&&g++<500)s.add(rnd(2,n-1));tiles=[...s].sort((a,b)=>a-b)}
+  return{key:'af'+n,kind:'pick',ask:`Tap <b>all</b> the factors of ${n}`,big:String(n),tiles,answer:f,ansText:list(f),pts:15,
+    explain:`Find the factor pairs: ${pairText(n)}. So the factors of ${n} are <b>${list(f)}</b>.${f.length===2?` ${n} is a <b>prime number</b>: its only factors are 1 and itself.`:''}`,
+    hint:`Start with 1 × ${n}. Then try 2, 3, 4 and so on. Every factor has a partner that multiplies with it to make ${n}.`,review:`All the factors of ${n}`}
+}
+function gNotF(){
+  let n,f;do{n=pick(COMP);f=FAC(n)}while(f.length<4);
+  const nn=nearNon(n,f),x=pick(nn);
+  return mcq({key:'nf'+n,ask:`Which of these is <b>not</b> a factor of ${n}?`,big:String(n),answer:x,wrong:f,
+    explain:`${n} ÷ ${x} = ${Math.floor(n/x)} remainder ${n%x}, so ${x} is <b>not</b> a factor. The factors of ${n} are ${list(f)}.`,
+    hint:`Divide ${n} by each number. A factor leaves no remainder.`,review:`Not a factor of ${n}`})
+}
+function gIsF(){
+  let n,f;do{n=pick(COMP);f=FAC(n)}while(f.length<4);
+  const x=pick(f.slice(1,-1)),nn=nearNon(n,f);
+  return mcq({key:'if'+n,ask:`Which of these <b>is</b> a factor of ${n}?`,big:String(n),answer:x,wrong:nn,
+    explain:`${n} ÷ ${x} = ${n/x} exactly, so ${x} is a factor (${x} × ${n/x} = ${n}). The others leave a remainder. The factors of ${n} are ${list(f)}.`,
+    hint:`Which number goes into ${n} with nothing left over?`,review:`A factor of ${n}`})
+}
+function gCount(){
+  const n=pick(Math.random()<.15?PRIMES:COMP),f=FAC(n);
+  return{key:'cf'+n,kind:'num',ask:`How many factors does ${n} have?`,big:String(n),answer:f.length,ansText:String(f.length),pts:15,
+    explain:`Factor pairs: ${pairText(n)}. The factors are ${list(f)}, so ${n} has <b>${f.length}</b> factors.`,
+    hint:`List the factor pairs, starting with 1 × ${n}, then count every number.`,review:`Number of factors of ${n}`}
+}
+function gPrime(){
+  const p=pick(PRIMES.concat([2,3,5,7,11])),W=shuffle([21,27,33,39,49,51,57,63,69,77,81,87,91,93,15,25,35]).slice(0,3),w=W[0],pr=PAIRS(w)[1];
+  return mcq({key:'pr'+p,ask:`Which number has <b>only 2</b> factors?`,answer:p,wrong:W,
+    explain:`${p} has only 2 factors: 1 and ${p}. A number like this is called a <b>prime number</b>. The others have more, e.g. ${w} = ${pr[0]} × ${pr[1]}.`,
+    hint:`Try dividing each number by 3, 5 and 7.`,review:'The number with only 2 factors'})
+}
+function gNext3(){
+  const k=pick([2,3,4,5,6,7,8,9,11,12,14,15,20,25,60]),m=rnd(1,3),s=[m*k,(m+1)*k],a=[(m+2)*k,(m+3)*k,(m+4)*k];
+  return{key:'n3'+k+'|'+m,kind:'nums',ask:`Write the next 3 multiples of ${k}`,big:`${s[0]}, ${s[1]}, ?, ?, ?`,answer:a,ansText:list(a),pts:15,
+    explain:`Multiples of ${k} go up in ${k}s: ${s[1]} + ${k} = ${a[0]}, ${a[0]} + ${k} = ${a[1]}, ${a[1]} + ${k} = ${a[2]}. So the answer is <b>${list(a)}</b>.`,
+    hint:`What do you add to get from ${s[0]} to ${s[1]}?`,review:`Next 3 multiples after ${s[0]}, ${s[1]}`}
+}
+function gNth(){
+  const k=rnd(2,12),o=rnd(2,10);
+  return{key:'nt'+k+'|'+o,kind:'num',ask:`What is the <b>${OW[o]}</b> multiple of ${k}?`,answer:o*k,ansText:String(o*k),pts:15,
+    explain:`The first multiple of ${k} is ${k} itself (1 × ${k}). So the ${OW[o]} multiple is ${o} × ${k} = <b>${o*k}</b>. Count them: ${list(mults(k,o*k))}.`,
+    hint:`The first multiple of ${k} is ${k}. Count on in ${k}s.`,review:`The ${OW[o]} multiple of ${k}`}
+}
+function gIsM(){
+  const k=rnd(3,12),m=rnd(3,12),a=m*k,W=[a-1,a+1,a-2,a+2,a+k+1,a-k+1].filter(v=>v>0&&v%k);
+  return mcq({key:'im'+k+'|'+m,ask:`Which of these is a multiple of ${k}?`,answer:a,wrong:W,
+    explain:`${a} = ${m} × ${k}, so it is a multiple of ${k}. The others leave a remainder when divided by ${k}.`,
+    hint:`Which one is in the ${k} times table?`,review:`A multiple of ${k}`})
+}
+function gNotM(){
+  const k=rnd(3,12),m=rnd(3,10),x=k*m+rnd(1,k-1),W=shuffle([m-2,m-1,m+1,m+2,m+3].filter(i=>i>0)).map(i=>i*k);
+  return mcq({key:'nm'+k+'|'+x,ask:`Which of these is <b>not</b> a multiple of ${k}?`,answer:x,wrong:W,
+    explain:`${x} ÷ ${k} = ${Math.floor(x/k)} remainder ${x%k}, so ${x} is not a multiple of ${k}. The others are all in the ${k} times table.`,
+    hint:`Divide each number by ${k}. Which one leaves a remainder?`,review:`Not a multiple of ${k}`})
+}
+function gSumM(){
+  const k=rnd(2,9),o1=rnd(1,4),o2=rnd(o1+1,8),a=o1*k+o2*k;
+  return{key:'sm'+k+'|'+o1+'|'+o2,kind:'num',ask:`Find the sum of the <b>${OW[o1]}</b> multiple and the <b>${OW[o2]}</b> multiple of ${k}.`,answer:a,ansText:String(a),pts:15,
+    explain:`${OW[o1][0].toUpperCase()+OW[o1].slice(1)} multiple: ${o1} × ${k} = ${o1*k}. ${OW[o2][0].toUpperCase()+OW[o2].slice(1)} multiple: ${o2} × ${k} = ${o2*k}. Sum: ${o1*k} + ${o2*k} = <b>${a}</b>.`,
+    hint:`Remember: the first multiple of ${k} is ${k}.`,review:`Sum of the ${OW[o1]} and ${OW[o2]} multiples of ${k}`}
+}
+function cfPairNums(){
+  let a,b;do{const g=pick([2,3,4,5,6,8,10,12]),x=rnd(2,9),y=rnd(2,9);a=g*Math.min(x,y);b=g*Math.max(x,y)}while(a===b||b>100);
+  return[a,b]
+}
+function gPickCF(){
+  const[a,b]=cfPairNums(),fa=FAC(a),fb=FAC(b),com=fa.filter(x=>fb.includes(x)),tiles=[...new Set([...fa,...fb])].sort((x,y)=>x-y);
+  return{key:'pc'+a+'|'+b,kind:'pick',ask:`Tap <b>all</b> the common factors of ${a} and ${b}`,big:`${a} and ${b}`,tiles,answer:com,ansText:list(com),pts:15,
+    explain:`Factors of ${a}: ${list(fa)}. Factors of ${b}: ${list(fb)}. The numbers in <b>both</b> lists are <b>${list(com)}</b>.`,
+    hint:`Every tile is a factor of ${a} or ${b}. Keep only the ones that are factors of both.`,review:`Common factors of ${a} and ${b}`}
+}
+function gCFm(){
+  const[a,b]=cfPairNums(),fa=FAC(a),fb=FAC(b),com=fa.filter(x=>fb.includes(x)&&x>1);
+  const W=[...fa.filter(x=>!fb.includes(x)),...fb.filter(x=>!fa.includes(x))];
+  for(let x=2;W.length<3&&x<b;x++)if(a%x&&b%x)W.push(x);
+  const x=pick(com.length?com:[1]);
+  return mcq({key:'cm'+a+'|'+b,ask:`Which of these is a common factor of ${a} and ${b}?`,big:`${a} and ${b}`,answer:x,wrong:W,
+    explain:`${a} ÷ ${x} = ${a/x} and ${b} ÷ ${x} = ${b/x}, so ${x} is a factor of both. Factors of ${a}: ${list(fa)}. Factors of ${b}: ${list(fb)}.`,
+    hint:`A common factor must divide <b>both</b> numbers exactly.`,review:`A common factor of ${a} and ${b}`})
+}
+function cmPair(max){let a,b;do{a=rnd(2,10);b=rnd(2,10)}while(a===b||lcm(a,b)>max);return a<b?[a,b]:[b,a]}
+function gCMm(){
+  const[a,b]=cmPair(72),L=lcm(a,b),c=[];
+  for(let i=1;i<=15;i++){if((a*i)%b)c.push(a*i);if((b*i)%a)c.push(b*i)}
+  const W=[...new Set(c)].sort((x,y)=>Math.abs(x-L)-Math.abs(y-L)).slice(0,6);
+  return mcq({key:'mm'+a+'|'+b,ask:`Which of these is a common multiple of ${a} and ${b}?`,big:`${a} and ${b}`,answer:L,wrong:W,
+    explain:`Multiples of ${a}: ${list(mults(a,L))}… Multiples of ${b}: ${list(mults(b,L))}… <b>${L}</b> is in both lists, so it's a common multiple.`,
+    hint:`Which number can be divided exactly by ${a} <b>and</b> by ${b}?`,review:`A common multiple of ${a} and ${b}`})
+}
+function gNthCM(){
+  const[a,b]=cmPair(48),L=lcm(a,b),o=rnd(1,3),A=o*L,cm=mults(L,A);
+  return{key:'nc'+a+'|'+b+'|'+o,kind:'num',ask:`What is the <b>${OW[o]}</b> common multiple of ${a} and ${b}?`,big:`${a} and ${b}`,answer:A,ansText:String(A),pts:15,
+    explain:`Multiples of ${a}: ${list(mults(a,A))}. Multiples of ${b}: ${list(mults(b,A))}. Numbers in both lists: ${list(cm)}. The ${OW[o]} one is <b>${A}</b>.`,
+    hint:`List the multiples of ${b}, then check which ones ${a} also goes into.`,review:`The ${OW[o]} common multiple of ${a} and ${b}`}
+}
+function gCFpair(){
+  const k=pick([3,4,5,6,7,8,9,12]),p=rnd(2,5),q=rnd(p+1,7),fk=FAC(k).filter(x=>x<k);
+  const pr=(x,y)=>`${Math.min(x,y)} and ${Math.max(x,y)}`;
+  const A=pr(k*p,k*q);
+  const d1=fk.length>=2?pr(fk[fk.length-1],fk[fk.length-2]):pr(1,k+1);
+  const d2=pr(pick(fk),k);
+  let d3;do{d3=pr(k*rnd(2,6),k*rnd(2,6)+rnd(1,k-1))}while(d3===A);
+  return mcq({key:'fp'+k+'|'+p+'|'+q,ask:`${k} is a common factor of…`,big:String(k),answer:A,wrong:[d1,d2,d3],
+    explain:`${k} goes exactly into ${k*p} (${k} × ${p}) and ${k*q} (${k} × ${q}). In each of the other pairs, at least one number can't be divided exactly by ${k}. Careful: ${k} is a factor of a number only if the number is ${k} or bigger.`,
+    hint:`Both numbers must be in the ${k} times table.`,review:`${k} is a common factor of`})
+}
+const TRI=[[3,4,6],[2,3,4],[4,6,8],[3,5,6],[2,5,6],[4,5,10],[6,8,12],[3,4,8],[2,3,5],[4,6,9]];
+function gShare(){
+  const[a,b,c]=pick(TRI),L=lcm(lcm(a,b),c),thing=pick(['sweets','stickers','marbles','cards']);
+  return{key:'sh'+a+b+c,kind:'num',ask:`What is the least number of ${thing} that can be shared equally among ${a}, ${b} or ${c} children, with none left over?`,answer:L,ansText:String(L),pts:15,
+    explain:`The number must be a multiple of ${a}, ${b} <b>and</b> ${c}. Count in ${c}s (the biggest): ${list(mults(c,L))}. The first one that ${a} and ${b} also go into is <b>${L}</b>.`,
+    hint:`Find the first common multiple of ${a}, ${b} and ${c}.`,review:`Least number shared among ${a}, ${b} or ${c}`}
+}
+function gRiddle(){
+  const[a,b]=pick([[8,9],[6,7],[5,8],[4,9],[6,8],[4,6],[9,12],[5,6],[3,8],[7,8],[6,9],[4,7]]),L=lcm(a,b);
+  const m=Math.ceil(100/L)*L,nx=m+L;let X=Math.ceil((m+1)/10)*10;if(X>nx)X=m+1;
+  return{key:'rd'+a+'|'+b,kind:'num',ask:`I am a 3-digit number less than ${X}. I am also a common multiple of ${a} and ${b}. What number am I?`,answer:m,ansText:String(m),pts:15,
+    explain:`Common multiples of ${a} and ${b} are multiples of ${L}: ${list(mults(L,nx))}… The only 3-digit one less than ${X} is <b>${m}</b>.`,
+    hint:`First find the smallest common multiple of ${a} and ${b}, then keep adding it.`,review:`3-digit number under ${X}, common multiple of ${a} and ${b}`}
+}
+function gRoundLink(){
+  const[a,b]=pick([[4,6],[3,4],[2,7],[3,5],[4,5],[6,8],[3,8],[2,9],[4,9],[5,6],[2,6],[3,6],[4,8],[6,9]].filter(([x,y])=>lcm(x,y)>=11)),L=lcm(a,b);
+  const m=L*rnd(2,Math.floor(150/L)),R=m%10>=5?m-m%10+10:m-m%10;
+  return{key:'rl'+a+'|'+b+'|'+m,kind:'num',ask:`When a number is rounded to the nearest 10, it becomes ${R}. It is also a common multiple of ${a} and ${b}. What is the number?`,answer:m,ansText:String(m),pts:15,
+    explain:`Numbers that round to ${R} go from ${R-5} to ${R+4}. Common multiples of ${a} and ${b} are multiples of ${L}: ${list(mults(L,R+4+L).slice(-4))}… Only <b>${m}</b> is between ${R-5} and ${R+4}.`,
+    hint:`Which numbers round to ${R}? Then look for a multiple of both ${a} and ${b} among them.`,review:`Rounds to ${R}, common multiple of ${a} and ${b}`}
+}
+function gRem(){
+  for(;;){
+    const p=rnd(5,9);let q;do{q=rnd(5,9)}while(q===p);
+    const n=rnd(25,95),r1=n%p,r2=n%q;if(!r1||!r2)continue;
+    const lo=Math.floor((n-rnd(3,20))/10)*10,hi=lo+pick([30,40]);if(hi<=n||lo<10)continue;
+    const sol=[];for(let x=lo;x<=hi;x++)if(x%p===r1&&x%q===r2)sol.push(x);if(sol.length!==1)continue;
+    const who=pick(['Gary','Mei Ling','Ravi','Aisyah','Ben']),it=pick(['jellybeans','marbles','stickers','sweets']);
+    const c1=[];for(let x=lo;x<=hi;x++)if(x%p===r1)c1.push(x);
+    return{key:'rm'+n+p+q,kind:'num',ask:`${who} had between ${lo} and ${hi} ${it}. Packed into bags of ${p}, there would be ${r1} left. Packed into bags of ${q}, there would be ${r2} left. How many ${it} were there?`,answer:n,ansText:String(n),pts:15,
+      explain:`Numbers from ${lo} to ${hi} that leave ${r1} when divided by ${p} (a multiple of ${p}, plus ${r1}): ${list(c1)}. Which one leaves ${r2} when divided by ${q}? Only <b>${n}</b>, because ${n} = ${Math.floor(n/q)} × ${q} + ${r2}.`,
+      hint:`List multiples of ${p} between ${lo} and ${hi}, add ${r1} to each, then test them with bags of ${q}.`,review:`Between ${lo} and ${hi}: bags of ${p} leave ${r1}, bags of ${q} leave ${r2}`}
+  }
+}
+function gSumF(){
+  const n=pick([6,8,10,12,14,15,16,18,20,21,24,28,30,32,36,39,40]),f=FAC(n),s=sumF(n);
+  return{key:'sf'+n,kind:'num',ask:`What is the sum of all the factors of ${n}?`,big:String(n),answer:s,ansText:String(s),pts:15,
+    explain:`Factors of ${n}: ${list(f)}. Add them: ${f.join(' + ')} = <b>${s}</b>.`,
+    hint:`List all the factors first (don't forget 1 and ${n}), then add.`,review:`Sum of all the factors of ${n}`}
+}
+function gPlus(){
+  const c=pick([5,10,12,20,25]),k=rnd(2,9),o=rnd(2,8),a=c+o*k;
+  return{key:'pl'+c+'|'+k+'|'+o,kind:'num',ask:`Find the sum of ${c} and the <b>${OW[o]}</b> multiple of ${k}.`,answer:a,ansText:String(a),pts:15,
+    explain:`The ${OW[o]} multiple of ${k} is ${o} × ${k} = ${o*k}. Then ${c} + ${o*k} = <b>${a}</b>.`,
+    hint:`Find the ${OW[o]} multiple of ${k} first.`,review:`${c} + the ${OW[o]} multiple of ${k}`}
+}
+function gDiff(){
+  let k,o,n,A,B;do{k=rnd(3,9);o=rnd(3,9);n=pick([10,12,14,15,16,18,20,24]);A=o*k;B=sumF(n)}while(A===B);
+  const d=Math.abs(A-B);
+  return{key:'df'+k+'|'+o+'|'+n,kind:'num',ask:`What is the difference between the <b>${OW[o]}</b> multiple of ${k} and the sum of all the factors of ${n}?`,answer:d,ansText:String(d),pts:15,
+    explain:`The ${OW[o]} multiple of ${k} is ${o} × ${k} = ${A}. Factors of ${n}: ${list(FAC(n))}, which add up to ${B}. Difference: ${Math.max(A,B)} − ${Math.min(A,B)} = <b>${d}</b>.`,
+    hint:`Work out the two numbers separately, then subtract the smaller from the bigger.`,review:`${OW[o]} multiple of ${k} vs sum of factors of ${n}`}
+}
+const SV=[
+ {t:'smallest even number that has exactly 3 factors',pre:n=>n%2===0,k:3,from:1},
+ {t:'smallest odd number that has exactly 3 factors',pre:n=>n%2===1,k:3,from:1},
+ {t:'smallest number that has exactly 4 factors',pre:()=>true,k:4,from:1},
+ {t:'smallest 2-digit number that has exactly 3 factors',pre:()=>true,k:3,from:10},
+ {t:'smallest 2-digit number that has only 2 factors',pre:()=>true,k:2,from:10},
+ {t:'largest 2-digit number that has only 2 factors',pre:()=>true,k:2,from:99,down:true},
+ {t:'smallest number that has exactly 6 factors',pre:()=>true,k:6,from:1}];
+function gSmall(){
+  const v=pick(SV),rej=[];let ans;
+  for(let n=v.from;;n+=v.down?-1:1){if(!v.pre(n))continue;if(C(n)===v.k){ans=n;break}rej.push(n)}
+  const shown=rej.slice(-4).map(x=>`${x} has ${C(x)} factor${C(x)>1?'s':''}`);
+  return{key:'sv'+v.t,kind:'num',ask:`What is the ${v.t}?`,answer:ans,ansText:String(ans),pts:15,
+    explain:`${shown.length?`Check in order: ${list(shown)}. `:''}<b>${ans}</b> has factors ${list(FAC(ans))}: exactly ${v.k}.${v.k===3?' Tip: numbers with exactly 3 factors are squares of prime numbers, like 4 = 2 × 2, 9 = 3 × 3 and 25 = 5 × 5.':''}`,
+    hint:`Test numbers one by one ${v.down?'going down from 99':'from the smallest'} and count their factors.`,review:`The ${v.t}`}
+}
+const FLV=[
+ {id:'hunt',name:'Factor hunt',ex:'Find every factor of 24',gens:[gAll,gAll,gAll,gNotF,gIsF,gCount,gPrime]},
+ {id:'hops',name:'Multiple hops',ex:'7, 14, ?, ?, ?',gens:[gNext3,gNext3,gNth,gIsM,gNotM,gSumM]},
+ {id:'common',name:'Common ground',ex:'Common factors of 18 and 48',gens:[gPickCF,gPickCF,gCFm,gCMm,gNthCM,gCFpair]},
+ {id:'puzzle',name:'Puzzle trail',ex:'Sweets, jellybeans and number riddles',gens:[gShare,gRiddle,gRoundLink,gRem,gSumF,gPlus,gDiff,gSmall]},
+ {id:'mix',name:'Garden mix',ex:'Everything shuffled. The boss round!',mix:true}
+];
+function fmQ(L){const g=L.mix?pick(pick(FLV.slice(0,4)).gens):pick(L.gens);return g()}
+let FN=12,FA=4,FB=6;
+const fmLearn=()=>`<div class="card">
+  <h1>Factors make garden beds</h1>
+  <p class="lead">A <b>factor</b> divides a number exactly, with nothing left over. Plant that many flowers in neat rows: every rectangle you can make is a factor pair.</p>
+  <div class="numpick"><button class="rbtn" id="fminus" aria-label="One less">−</button><output id="fn">12</output><button class="rbtn" id="fplus" aria-label="One more">+</button></div>
+  <input type="range" id="fslide" min="2" max="60" aria-label="Number of flowers">
+  <div class="beds" id="beds"></div>
+  <p class="say" id="fsay"></p></div>
+<div class="card">
+  <h1>Multiples are frog hops</h1>
+  <p class="lead">The <b>multiples</b> of 4 are where a frog lands hopping in 4s: 4, 8, 12, 16… Pick two frogs. Squares where <b>both</b> frogs land are <b>common multiples</b>.</p>
+  <div class="lab">Frog A hops in</div><div class="chips" id="ma"></div>
+  <div class="lab">Frog B hops in</div><div class="chips" id="mb"></div>
+  <div class="key"><span><i style="background:var(--ma)"></i>Frog A only</span><span><i style="background:var(--mb)"></i>Frog B only</span><span><i style="background:var(--acc)"></i>Both: common multiple</span></div>
+  <div class="g100" id="g100"></div>
+  <p class="say" id="msay"></p></div>
+<div class="steps">
+  <div class="step"><span class="n">1</span><h2>1 and itself</h2><p>1 is a factor of every number, and every number is a factor of itself.</p></div>
+  <div class="step"><span class="n">2</span><h2>Smaller or bigger</h2><p>Factors are never bigger than the number. Multiples are never smaller.</p></div>
+  <div class="step"><span class="n">3</span><h2>First multiple</h2><p>The first multiple of a number is the number itself: the first multiple of 7 is 7.</p></div>
+  <div class="step"><span class="n">4</span><h2>Prime numbers</h2><p>A number with only 2 factors, 1 and itself, is a prime number: 2, 3, 5, 7, 11, 13…</p></div>
+</div>
+<div class="center"><button class="go" data-sub="play">I'm ready, let's play</button></div>`;
+function bed(r,c){
+  const s=Math.max(6,Math.min(20,Math.floor(230/c))),w=c*s+10,h=r*s+10;let d='';
+  for(let i=0;i<r;i++)for(let j=0;j<c;j++)d+=`<circle cx="${5+s*j+s/2}" cy="${5+s*i+s/2}" r="${(s*.36).toFixed(1)}" class="s-plant"/>`;
+  return`<figure class="bed"><svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><rect width="${w}" height="${h}" rx="6" class="s-soil"/>${d}</svg><figcaption>${r} × ${c}</figcaption></figure>`
+}
+function drawBeds(){
+  $('#fn').textContent=FN;$('#fslide').value=FN;const P=PAIRS(FN),f=FAC(FN);
+  $('#beds').innerHTML=P.map(([r,c])=>bed(r,c)).join('');
+  $('#fsay').innerHTML=`${FN} flowers can be planted ${P.length===1?'in only one way':`in ${P.length} different ways`}: ${pairText(FN)}. So the factors of ${FN} are <b>${list(f)}</b> (${f.length} factors).`+
+    (f.length===2?` Only one long row works, so ${FN} is a <b>prime number</b>.`:'')+(P.some(([a,b])=>a===b)?` One bed is a perfect square (${Math.sqrt(FN)} × ${Math.sqrt(FN)}), so ${FN} has an odd number of factors.`:'')
+}
+function drawGrid(){
+  const ch=(id,v,attr)=>{$(id).innerHTML=[2,3,4,5,6,7,8,9,10,12].map(k=>`<button class="chip${k===v?' on':''}" ${attr}="${k}">${k}s</button>`).join('')};
+  ch('#ma',FA,'data-fa');ch('#mb',FB,'data-fb');
+  let h='';for(let n=1;n<=100;n++){const a=n%FA===0,b=n%FB===0;h+=`<span class="${a&&b?'ab':a?'a':b?'b':''}">${n}</span>`}
+  $('#g100').innerHTML=h;
+  const L=lcm(FA,FB),cm=mults(L,100);
+  $('#msay').innerHTML=FA===FB?`Both frogs hop in ${FA}s, so they land on the same squares. Pick two different hop sizes.`:
+    `Common multiples of ${FA} and ${FB} up to 100: <b>${list(cm)}</b>. The first (smallest) one is <b>${L}</b>, and every other common multiple is a multiple of ${L}.`
+}
+function fmInit(){const s=$('#fslide');s.addEventListener('input',()=>{FN=+s.value;drawBeds()});drawBeds();drawGrid()}
+
+/* ================= COLUMN CASTLE (FOUR OPERATIONS) ================= */
+const NM=n=>n.toLocaleString('en-US');
+const PN=['ones','tens','hundreds','thousands','ten thousands','hundred thousands'];
+const PS=['O','T','H','Th','TTh','HTh'];
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const digs=n=>String(n).split('').reverse().map(Number);
+function addSteps(a,b){
+  const A=digs(a),Bd=digs(b),n=Math.max(A.length,Bd.length),st=[];let c=0;
+  for(let i=0;i<n;i++){const x=A[i]||0,y=Bd[i]||0,s=x+y+c;
+    st.push({i,d:s%10,c:Math.floor(s/10),note:`${cap(PN[i])}: ${x} + ${y}${c?` + ${c} carried`:''} = ${s}. ${s>9?`Write ${s%10}, carry 1 to the ${PN[i+1]}.`:`Write ${s}.`}`});c=Math.floor(s/10)}
+  if(c)st.push({i:n,d:c,c:0,note:`Write the carried 1 in the ${PN[n]} place.`});
+  return st
+}
+function subSteps(a,b){
+  const T=digs(a),Bd=digs(b),st=[];
+  for(let i=0;i<T.length;i++){
+    const y=Bd[i]||0;let note;
+    if(T[i]<y){
+      let j=i+1;while(T[j]===0)j++;T[j]--;for(let k=j-1;k>i;k--)T[k]=9;const was=T[i];T[i]+=10;
+      note=`${cap(PN[i])}: ${was} is smaller than ${y}, so regroup 1 from the ${PN[j]}${j>i+1?' (the 0 in between becomes 9)':''}. Now ${T[i]} − ${y} = ${T[i]-y}.`
+    }else note=`${cap(PN[i])}: ${T[i]} − ${y} = ${T[i]-y}.`;
+    if(i===T.length-1&&T[i]-y===0&&i>0)note+=' (No need to write a 0 at the front.)';
+    st.push({i,d:T[i]-y,top:[...T],note})
+  }
+  return st
+}
+function mulSteps(a,m){
+  const A=digs(a),st=[];let c=0;
+  for(let i=0;i<A.length;i++){const p=A[i]*m+c;
+    st.push({i,d:p%10,c:Math.floor(p/10),note:`${cap(PN[i])}: ${A[i]} × ${m}${c?` + ${c} carried`:''} = ${p}. ${p>9?`Write ${p%10}, carry ${Math.floor(p/10)}.`:`Write ${p}.`}`});c=Math.floor(p/10)}
+  if(c)st.push({i:A.length,d:c,c:0,note:`Write the carried ${c} in the ${PN[A.length]} place.`});
+  return st
+}
+const colHTML=(a,b,op,ans)=>`<div class="colsum"><span>${NM(a)}</span><span><b>${op}</b>${NM(b)}</span><span class="rule"></span><span class="${ans==null?'cq':'ca'}">${ans==null?'?':NM(ans)}</span></div>`;
+const stepsHTML=st=>st.map(s=>s.note).join('<br>');
+function numQ(o){return Object.assign({kind:'num',pts:15,ansText:NM(o.answer)},o)}
+function mcqN(o){const r=mcq(Object.assign({},o,{answer:NM(o.answer),wrong:o.wrong.filter(x=>x>0&&x!==o.answer).map(NM)}));return r}
+const asNumOrMcq=(o,p)=>Math.random()<p?mcqN(o):numQ(o);
+const noCarryAdd=(a,b)=>{const A=digs(a),Bd=digs(b);let r=0;for(let i=Math.max(A.length,Bd.length)-1;i>=0;i--)r=r*10+((A[i]||0)+(Bd[i]||0))%10;return r};
+const flipSub=(a,b)=>{const A=digs(a),Bd=digs(b);let r=0;for(let i=A.length-1;i>=0;i--)r=r*10+Math.abs((A[i]||0)-(Bd[i]||0));return r};
+const noCarryMul=(a,m)=>{const A=digs(a);let r=0;for(let i=A.length-1;i>=0;i--)r=r*10+(A[i]*m)%10;return r};
+function gAdd(){
+  const a=rnd(10000,79999),b=rnd(10000,99999-a),ans=a+b;
+  return asNumOrMcq({key:'ad'+a+'|'+b,ask:'Work out the sum',big:st=>colHTML(a,b,'+',st==='done'?ans:null),answer:ans,
+    wrong:[noCarryAdd(a,b),ans+10,ans-100,ans+1000,ans-10],explain:stepsHTML(addSteps(a,b))+`<br>So ${NM(a)} + ${NM(b)} = <b>${NM(ans)}</b>.`,
+    hint:'Start with the ones. If a column adds up to 10 or more, write the ones digit and carry 1 to the next column.',review:`${NM(a)} + ${NM(b)}`},.3)
+}
+function gSub(){
+  const a=rnd(30000,99999),b=rnd(10000,a-1000),ans=a-b;
+  return asNumOrMcq({key:'sb'+a+'|'+b,ask:'Work out the difference',big:st=>colHTML(a,b,'−',st==='done'?ans:null),answer:ans,
+    wrong:[flipSub(a,b),ans+10,ans-100,ans+1000,ans-10],explain:stepsHTML(subSteps(a,b))+`<br>So ${NM(a)} − ${NM(b)} = <b>${NM(ans)}</b>.`,
+    hint:'Start with the ones. If the top digit is smaller, regroup: take 1 from the next column on the left.',review:`${NM(a)} − ${NM(b)}`},.3)
+}
+function gMul1(){
+  const a=rnd(300,9999),m=rnd(2,9),ans=a*m,col=Math.random()<.6;
+  return asNumOrMcq({key:'m1'+a+'|'+m,ask:col?'Work out the product':`What is the product of ${NM(a)} and ${m}?`,big:col?st=>colHTML(a,m,'×',st==='done'?ans:null):null,answer:ans,
+    wrong:[noCarryMul(a,m),ans+100,ans-100,ans+1000,ans-200,a*(m-1)],explain:stepsHTML(mulSteps(a,m))+`<br>So ${NM(a)} × ${m} = <b>${NM(ans)}</b>.`,
+    hint:`Multiply each digit by ${m}, starting with the ones. Remember to add the number you carried.`,review:`${NM(a)} × ${m}`},col?.25:.6)
+}
+function gPlace(){
+  let a,m,P,k;do{a=rnd(1000,9999);m=rnd(3,9);P=a*m;k=rnd(1,3)}while(P<10**(k+1));
+  const d=Math.floor(P/10**k)%10,others=[...new Set([...String(P)].map(Number).filter(x=>x!==d))];
+  while(others.length<3){const x=rnd(0,9);if(x!==d&&!others.includes(x))others.push(x)}
+  return mcq({key:'pl'+a+'|'+m+'|'+k,ask:`When ${NM(a)} is multiplied by ${m}, what is the digit in the <b>${PN[k]}</b> place?`,answer:d,wrong:others,
+    explain:`${NM(a)} × ${m} = ${NM(P)}. Count places from the right: ones, tens, hundreds, thousands. The ${PN[k]} digit is <b>${d}</b>.`,
+    hint:`Work out ${NM(a)} × ${m} first, then find the ${PN[k]} digit.`,review:`${PN[k]} digit of ${NM(a)} × ${m}`})
+}
+const pick2=()=>{let b;do{b=rnd(12,98)}while(b%10===0);return b};
+const splitText=(a,b)=>{const t=Math.floor(b/10)*10,o=b%10;return`Split ${b} into ${t} + ${o}.<br>${NM(a)} × ${o} = ${NM(a*o)}<br>${NM(a)} × ${t} = ${NM(a*t)}<br>Add: ${NM(a*o)} + ${NM(a*t)} = <b>${NM(a*b)}</b>.`};
+function gMul2(){
+  const a=rnd(100,999),b=pick2(),ans=a*b,t=Math.floor(b/10),o=b%10,col=Math.random()<.6;
+  return asNumOrMcq({key:'m2'+a+'|'+b,ask:col?'Work out the product':`Find the product of ${NM(a)} and ${b}.`,big:col?st=>colHTML(a,b,'×',st==='done'?ans:null):null,answer:ans,
+    wrong:[a*(t+o),ans+1000,ans-1000,a*t*10,ans+100],explain:splitText(a,b),
+    hint:`Split ${b} into ${t*10} + ${o}. Multiply ${NM(a)} by each part, then add the two answers.`,review:`${NM(a)} × ${b}`},.3)
+}
+function gSplit(){
+  const a=rnd(100,999),b=pick2(),t=Math.floor(b/10)*10,o=b%10,tens=Math.random()<.4;
+  return numQ({key:'sp'+a+'|'+b+tens,ask:`${a} × ${b} = ${a} × ${tens?'☐':t} + ${a} × ${tens?o:'☐'}<br>What is the missing number in the box?`,answer:tens?t:o,pts:10,
+    explain:`${b} = ${t} + ${o}, so ${a} × ${b} = ${a} × ${t} + ${a} × ${o}. The missing number is <b>${tens?t:o}</b>.`,
+    hint:`Break ${b} into tens and ones.`,review:`${a} × ${b} = ${a} × ${tens?'☐':t} + ${a} × ${tens?o:'☐'}`})
+}
+function gLess(){
+  const a=rnd(300,999),b=pick2(),k=pick([10,20,50,100]),P=a*b,ans=P-k,t=Math.floor(b/10),o=b%10;
+  return mcqN({key:'ls'+a+'|'+b+'|'+k,ask:`What is ${k} less than the product of ${NM(a)} and ${b}?`,answer:ans,wrong:[P,P+k,a*(t+o)-k,ans-1000],
+    explain:`${splitText(a,b)}<br>${k} less: ${NM(P)} − ${k} = <b>${NM(ans)}</b>.`,
+    hint:`First find ${NM(a)} × ${b}. Then take away ${k}.`,review:`${k} less than ${NM(a)} × ${b}`})
+}
+const PEOPLE=[['Kim','she'],['Lisa','she'],['Ravi','he'],['Ben','he'],['Mei Ling','she'],['Ahmad','he'],['Sam','he'],['Aisyah','she'],['Kelvin','he'],['Sue','she']];
+const twoPeople=()=>{const a=pick(PEOPLE);let b;do{b=pick(PEOPLE)}while(b===a);return[a,b]};
+const tw=k=>k===2?'twice as many':k===3?pick(['3 times as many','thrice as many']):`${k} times as many`;
+function wTimes(){
+  const[[A],[Bn]]=twoPeople(),th=pick(['marbles','stickers','trading cards','stamps','beads']),n=rnd(150,1999),k=rnd(2,9),ans=n*k;
+  return asNumOrMcq({key:'wt'+n+k,ask:`${A} has ${NM(n)} ${th}. ${Bn} has ${tw(k)} ${th} as ${A}. How many ${th} does ${Bn} have?`,answer:ans,
+    wrong:[ans+100,ans-100,ans+200,n+k,noCarryMul(n,k)],explain:`"${tw(k).replace(' as many','')}" means multiply by ${k}.<br>${stepsHTML(mulSteps(n,k))}<br>${Bn} has <b>${NM(ans)}</b> ${th}.`,
+    hint:`"Times as many" means multiply.`,review:`${NM(n)}, ${tw(k)}`},.4)
+}
+function wAlt(){
+  const[[A],[Bn]]=twoPeople(),th=pick(['marbles','stickers','trading cards','stamps']),n=rnd(150,1999),k=rnd(2,6),ans=n*(k+1);
+  return numQ({key:'wa'+n+k,ask:`${A} has ${NM(n)} ${th}. ${Bn} has ${tw(k)} ${th} as ${A}. How many ${th} do they have <b>altogether</b>?`,answer:ans,
+    explain:`${Bn} has ${NM(n)} × ${k} = ${NM(n*k)}.<br>Altogether: ${NM(n)} + ${NM(n*k)} = <b>${NM(ans)}</b>.<br>Shortcut: ${A} is 1 unit and ${Bn} is ${k} units, so ${k+1} units = ${NM(n)} × ${k+1} = ${NM(ans)}.`,
+    hint:`Find how many ${Bn} has first, then add both amounts.`,review:`${NM(n)}, ${tw(k)}, altogether`})
+}
+function wMonth(){
+  const[A,pr]=pick(PEOPLE),v=pick(['saves','earns']),n=rnd(250,3999),yr=Math.random()<.55,m=yr?12:6,ans=n*m;
+  return Object.assign(numQ({key:'wm'+n+m,ask:`${A} ${v} $${NM(n)} a month. How much money does ${pr} ${v.slice(0,-1)} in ${yr?'a year':'half a year'}?`,answer:ans,
+    explain:`${yr?'A year has 12 months':'Half a year is 6 months'}, so multiply by ${m}.<br>${m===12?splitText(n,12):stepsHTML(mulSteps(n,6))}<br>${A} ${v} <b>$${NM(ans)}</b>.`,
+    hint:`How many months are in ${yr?'a year':'half a year'}?`,review:`$${NM(n)} a month for ${yr?'a year':'half a year'}`}),{ansText:'$'+NM(ans)})
+}
+function wGroups(){
+  const[A,pr]=pick(PEOPLE),p=rnd(110,499),q=rnd(12,48),ans=p*q;
+  const T=pick([
+    [`A shopkeeper has ${p} cartons of soft drinks. There are ${q} cans in each carton. How many cans of soft drinks does the shopkeeper have?`,'cans'],
+    [`${A} bought ${q} sheets of stickers. There were ${p} stickers on each sheet. How many stickers did ${pr} buy?`,'stickers'],
+    [`${A} arranged ${p} chairs in each room. There were ${q} rooms. How many chairs did ${pr} arrange?`,'chairs'],
+    [`The number of cars in a car park is ${q} times the number of motorcycles. There are ${p} motorcycles. How many cars are there?`,'cars']]);
+  return numQ({key:'wg'+p+q,ask:T[0],answer:ans,explain:`Equal groups, so multiply: ${p} × ${q}.<br>${splitText(p,q)}<br>There are <b>${NM(ans)}</b> ${T[1]}.`,
+    hint:'Equal groups? Multiply the number of groups by the number in each group.',review:`${p} × ${q} ${T[1]}`})
+}
+function wSeeds(){
+  const r=rnd(10,25),e=rnd(20,60),tot=r*e,a=rnd(100,tot-60),ans=tot-a,fr=pick(['apple','mango','lemon']),sd=pick(['orange','papaya','durian']);
+  return numQ({key:'ws'+r+e+a,ask:`Farmer Zac has ${a} ${fr} seeds and some ${sd} seeds in a box. He plants all the seeds in ${r} rows with ${e} seeds in each row. How many ${sd} seeds does he have?`,answer:ans,
+    explain:`All the seeds: ${r} × ${e} = ${NM(tot)}.<br>${cap(sd)} seeds: ${NM(tot)} − ${a} = <b>${NM(ans)}</b>.`,
+    hint:'First find how many seeds he planted altogether. Then take away the seeds you already know about.',review:`${r} rows of ${e}, minus ${a}`})
+}
+function wTickets(){
+  const T=rnd(60,99)*10,n1=rnd(150,Math.floor(T/2)),n2=rnd(100,T-n1-60),n3=T-n1-n2,p1=rnd(10,20),p2=rnd(25,40),p3=rnd(45,60),ans=n1*p1+n2*p2+n3*p3;
+  return Object.assign(numQ({key:'wk'+T+n1+n2,ask:`There were ${T} concert tickets for sale. ${n1} of them were sold at $${p1} each. ${n2} of them were sold at $${p2} each. The remaining tickets were sold at $${p3} each. How much money was collected from the sale of all the tickets?`,answer:ans,pts:20,
+    explain:`Remaining tickets: ${T} − ${n1} − ${n2} = ${n3}.<br>${n1} × $${p1} = $${NM(n1*p1)}<br>${n2} × $${p2} = $${NM(n2*p2)}<br>${n3} × $${p3} = $${NM(n3*p3)}<br>Total: $${NM(n1*p1)} + $${NM(n2*p2)} + $${NM(n3*p3)} = <b>$${NM(ans)}</b>.`,
+    hint:'Find how many tickets are "remaining" first. Then work out the money for each group and add.',review:`${T} tickets at three prices`}),{ansText:'$'+NM(ans)})
+}
+function wEggs(){
+  const e=rnd(150,300),t=rnd(30,50),b=rnd(8,t-15),m=rnd(300,Math.min(1500,(t-b)*e-200)),ans=e*t-e*b-m;
+  const[[A],[Bn]]=twoPeople();
+  return numQ({key:'we'+e+t+b,ask:`There were ${e} eggs in a tray. A shop had ${t} such trays. ${A} bought ${b} trays and ${Bn} bought ${NM(m)} eggs. How many eggs did the shop have left?`,answer:ans,pts:20,
+    explain:`Eggs at first: ${e} × ${t} = ${NM(e*t)}.<br>${A} bought ${e} × ${b} = ${NM(e*b)} eggs.<br>Left: ${NM(e*t)} − ${NM(e*b)} − ${NM(m)} = <b>${NM(ans)}</b>.<br>Shortcut: ${t} − ${b} = ${t-b} trays left, ${e} × ${t-b} = ${NM(e*(t-b))}, then − ${NM(m)}.`,
+    hint:`Careful: ${A} bought trays but ${Bn} bought single eggs. Change trays into eggs first.`,review:`${t} trays of ${e} eggs`})
+}
+const OLV=[
+ {id:'addsub',name:'Add and subtract',ex:'55,288 + 24,863',gens:[gAdd,gAdd,gSub,gSub]},
+ {id:'mul1',name:'Times a 1-digit number',ex:'1,632 × 4',gens:[gMul1,gMul1,gMul1,gPlace]},
+ {id:'mul2',name:'Times a 2-digit number',ex:'743 × 58',gens:[gMul2,gMul2,gSplit,gLess]},
+ {id:'words',name:'Word problems',ex:'Marbles, savings, tickets and eggs',gens:[wTimes,wAlt,wMonth,wGroups,wSeeds,wTickets,wEggs]},
+ {id:'mix',name:'Castle mix',ex:'Everything shuffled. The boss round!',mix:true}
+];
+function opsQ(L){const g=L.mix?pick(pick(OLV.slice(0,4)).gens):pick(L.gens);return g()}
+/* learn: step-through column method + box model */
+let CO='add',CA=55288,CB=24863,CK=0,BA=953,BB=67;
+const opsLearn=()=>`<div class="card">
+  <h1>The column method, one step at a time</h1>
+  <p class="lead">Line the numbers up by place value and always start with the <b>ones</b>. Press <b>Next step</b> to see each column worked out.</p>
+  <div class="chips" id="cops">${[['add','Add'],['sub','Subtract'],['mul','Multiply by 1 digit']].map(([v,t])=>`<button class="chip${CO===v?' on':''}" data-co="${v}">${t}</button>`).join('')}</div>
+  <div class="center"><div class="cgrid" id="cgrid"></div></div>
+  <p class="say" id="csay"></p>
+  <div class="row"><button class="go" id="cnext">Next step</button><button class="ghost" id="call">Show all</button><button class="ghost" id="cnew">New numbers</button></div></div>
+<div class="card">
+  <h1>Times a 2-digit number: split it</h1>
+  <p class="lead">Break the 2-digit number into <b>tens</b> and <b>ones</b>. Multiply each part, then add the two answers.</p>
+  <div id="boxm"></div>
+  <p class="say" id="boxsay"></p>
+  <div class="row"><button class="ghost" id="bnew">New numbers</button></div></div>
+<div class="steps">
+  <div class="step"><span class="n">×</span><h2>Times as many</h2><p>"4 times as many", "twice as many", "thrice as many": multiply.</p></div>
+  <div class="step"><span class="n">+</span><h2>Altogether</h2><p>"Altogether" or "in total": add all the parts. Find each part first.</p></div>
+  <div class="step"><span class="n">−</span><h2>Left over</h2><p>"Left", "remaining" or "how many more": subtract.</p></div>
+  <div class="step"><span class="n">12</span><h2>Months</h2><p>A year has 12 months. Half a year has 6 months.</p></div>
+</div>
+<div class="center"><button class="go" data-sub="play">I'm ready, let's play</button></div>`;
+const cSteps=()=>CO==='add'?addSteps(CA,CB):CO==='sub'?subSteps(CA,CB):mulSteps(CA,CB);
+const cRes=()=>CO==='add'?CA+CB:CO==='sub'?CA-CB:CA*CB;
+function newCol(){
+  if(CO==='add'){CA=rnd(10000,79999);CB=rnd(10000,99999-CA)}else if(CO==='sub'){CA=rnd(30000,99999);CB=rnd(10000,CA-1000)}else{CA=rnd(1000,9999);CB=rnd(3,9)}
+  CK=0;drawCol()
+}
+function drawCol(){
+  const st=cSteps(),res=cRes(),N=Math.max(String(CA).length,String(CB).length,String(res).length),done=CK>=st.length;
+  const A=digs(CA),Bd=digs(CB),cur=done?-1:st[CK].i,ans={},carry={};
+  st.slice(0,CK).forEach(s=>{ans[s.i]=s.d;if(s.c)carry[s.i+1]=s.c});
+  const top=CO==='sub'&&CK>0?st[CK-1].top:null;
+  if(CO==='sub'&&done){for(let i=N-1;i>0&&ans[i]===0;i--)delete ans[i]}
+  const cell=(t,cls)=>`<span class="${cls||''}">${t}</span>`;let h='';
+  h+=cell('','cl');for(let i=N-1;i>=0;i--)h+=cell(PS[i],'cl'+(i===cur?' cur':''));
+  h+=cell('','cc');for(let i=N-1;i>=0;i--){let t='';if(top&&A[i]!==undefined&&top[i]!==A[i])t=top[i];else if(carry[i])t=carry[i];h+=cell(t,'cc')}
+  h+=cell('');for(let i=N-1;i>=0;i--){const ch=top&&A[i]!==undefined&&top[i]!==A[i];h+=cell(A[i]??'',(ch?'old ':'')+(i===cur?'cur':''))}
+  h+=cell(CO==='add'?'+':CO==='sub'?'−':'×','cop');for(let i=N-1;i>=0;i--)h+=cell(Bd[i]??'',i===cur?'cur':'');
+  h+=`<span class="crule"></span>`;
+  h+=cell('');for(let i=N-1;i>=0;i--)h+=cell(ans[i]??'','cans'+(i===cur?' cur':''));
+  const g=$('#cgrid');g.style.gridTemplateColumns=`repeat(${N+1},1.05em)`;g.innerHTML=h;
+  $('#csay').innerHTML=CK===0?`${NM(CA)} ${CO==='add'?'+':CO==='sub'?'−':'×'} ${NM(CB)}. Press <b>Next step</b> to start with the ones.`:st[CK-1].note+(done?`<br><b>Answer: ${NM(res)}</b>`:'');
+  $('#cnext').disabled=done;$('#call').disabled=done;
+  $$('#cops .chip').forEach(b=>b.classList.toggle('on',b.dataset.co===CO))
+}
+function drawBox(){
+  const t=Math.floor(BB/10)*10,o=BB%10,p1=BA*t,p2=BA*o;
+  $('#boxm').innerHTML=`<div class="bx"><div class="bxh"><span></span><span>${t}</span><span>${o}</span></div>
+<div class="bxr"><span class="bxl">${BA}</span><div class="bxa">${BA} × ${t}<b>${NM(p1)}</b></div><div class="bxb">${BA} × ${o}<b>${NM(p2)}</b></div></div></div>`;
+  $('#boxsay').innerHTML=`${BA} × ${BB} = ${BA} × ${t} + ${BA} × ${o}<br>= ${NM(p1)} + ${NM(p2)} = <b>${NM(BA*BB)}</b>`
+}
+function opsInit(){drawCol();drawBox()}
+const castlePic=`<svg viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" class="s-sky"/><circle cx="262" cy="24" r="12" class="s-sun"/><rect y="104" width="300" height="26" class="s-hill"/>${[[40,52,'1'],[100,40,'6'],[160,46,'3'],[220,58,'2']].map(([x,y,d])=>`<g><rect x="${x}" y="${y}" width="44" height="${104-y}" fill="#d9cfbf"/>${[0,1,2].map(i=>`<rect x="${x+i*16}" y="${y-9}" width="12" height="10" fill="#d9cfbf"/>`).join('')}<text x="${x+22}" y="${y+34}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="26" fill="#14263a">${d}</text></g>`).join('')}<path d="M262,58 v-26 l18,6 l-18,6" stroke="#5b4630" stroke-width="3" fill="#ff7a1a"/><text x="281" y="96" font-family="Fredoka,sans-serif" font-weight="700" font-size="22" fill="#14263a" text-anchor="end">× 4</text></svg>`;
+
+/* ================= WORLDS ================= */
+const mtnPic=`<svg viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" class="s-sky"/><circle cx="240" cy="28" r="13" class="s-sun"/><path d="M0,130 L0,95 L50,70 L110,92 L170,62 L230,90 L300,72 L300,130Z" class="s-far"/><path d="M0,130 L0,112 L40,110 Q150,-10 260,110 L300,112 L300,130Z" class="s-hill"/><line x1="40" y1="110" x2="40" y2="70" class="s-pole"/><path d="M40,70 l20,6 l-20,6Z" class="s-fl"/><line x1="260" y1="110" x2="260" y2="70" class="s-pole"/><path d="M260,70 l-20,6 l20,6Z" class="s-fh"/><circle cx="190" cy="56" r="10" class="s-ball"/></svg>`;
+const gardenPic=(()=>{let d='';const bedA=(x,y,r,c)=>{let s=`<rect x="${x}" y="${y}" width="${c*13+6}" height="${r*13+6}" rx="4" class="s-soil"/>`;for(let i=0;i<r;i++)for(let j=0;j<c;j++)s+=`<circle cx="${x+9.5+13*j}" cy="${y+9.5+13*i}" r="4.5" class="s-plant"/>`;return s};
+  d+=bedA(18,58,2,6)+bedA(118,45,3,4)+bedA(196,32,4,3);
+  return`<svg viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" class="s-sky"/><circle cx="262" cy="22" r="12" class="s-sun"/><rect y="88" width="300" height="42" class="s-hill"/><rect y="40" width="300" height="50" class="s-far"/>${d}${[0,1,2,3].map(i=>`<ellipse cx="${40+70*i}" cy="112" rx="24" ry="10" class="s-stone"/><text x="${40+70*i}" y="119" class="s-stxt">${4*(i+1)}</text>`).join('')}</svg>`})();
+const W={
+  round:{name:'Rounding Mountain',topics:'Nearest 10, 100, 1,000, whole number and tenth',pic:mtnPic,levels:RLV,learn:roundLearn,init:roundInit,gen:roundQ,typeToggle:true},
+  fm:{name:'Factor Garden',topics:'Factors, multiples, common factors, common multiples and word problems',pic:gardenPic,levels:FLV,learn:fmLearn,init:fmInit,gen:fmQ},
+  ops:{name:'Column Castle',topics:'Four operations: add, subtract, multiply by 1 and 2-digit numbers, word problems',pic:castlePic,levels:OLV,learn:opsLearn,init:opsInit,gen:opsQ}
+};
+const ORDER=['round','fm','ops'];
+let curW='round';
+function head(){
+  const r=rankOf(S.pts),nx=RANKS[r+1];$('#pts').textContent=S.pts;
+  $('#rank').innerHTML=`<b>${RANKS[r][1]}</b>`+(nx?`<span class="bar"><i style="width:${Math.round((S.pts-RANKS[r][0])/(nx[0]-RANKS[r][0])*100)}%"></i></span><small>${nx[0]-S.pts} pts to ${nx[1]}</small>`:'<small>Top rank!</small>')
+}
+function show(n){['home','world','game','end'].forEach(s=>$('#'+s).hidden=s!==n);scrollTo(0,0)}
+function home(){
+  show('home');
+  $('#worlds').innerHTML=ORDER.map(id=>{const w=W[id],tot=w.levels.length*3,got=w.levels.reduce((s,l)=>s+(S.best[id+':'+l.id]||0),0);
+    return`<button class="wcard" data-world="${id}">${w.pic}<span class="wbody"><span class="wname">${w.name}</span><span class="wtop">${w.topics}</span><span class="wstars">${star(true,18)} ${got} / ${tot} stars</span></span></button>`}).join('')+
+    '<div class="soon">More worlds coming soon</div>'
+}
+function openWorld(id,sub){curW=id;show('world');$('#wname').textContent=W[id].name;setSub(sub||'learn')}
+function setSub(sub){
+  $$('.sub button').forEach(b=>b.classList.toggle('on',b.dataset.sub===sub));
+  const w=W[curW];$('#learnBox').hidden=sub!=='learn';$('#playBox').hidden=sub!=='play';
+  if(sub==='learn'){$('#learnBox').innerHTML=w.learn();w.init()}
+  else{
+    $('#learnBox').innerHTML='';
+    $('#typBox').innerHTML=w.typeToggle?`<label class="tog"><input type="checkbox" id="typ"${TYPE?' checked':''}> Type my answers instead of choosing (double points)</label>`:'';
+    $('#levels').innerHTML=w.levels.map(l=>`<button class="lv${l.mix?' boss':''}" data-lv="${l.id}"><span class="lvn">${l.name}</span><span class="lve">${l.ex}</span><span class="lvs">${[0,1,2].map(i=>star(i<(S.best[curW+':'+l.id]||0))).join('')}</span></button>`).join('')
+  }
+  scrollTo(0,0)
+}
+
+/* ================= GAME ENGINE ================= */
+let G=null;
+const val=x=>typeof x==='function'?x:()=>x;
+function start(lid){
+  const w=W[curW],L=w.levels.find(l=>l.id===lid),qs=[],seen=new Set();let guard=0;
+  while(qs.length<10&&guard++<400){const q=w.gen(L);if(!seen.has(q.key)){seen.add(q.key);qs.push(q)}}
+  G={w:curW,L,qs,i:0,score:0,streak:0,best:0,correct:0,wrong:[],r0:rankOf(S.pts)};
+  show('game');showQ()
+}
+const dots=()=>G.qs.map((q,i)=>`<i class="${i<G.i||(i===G.i&&G.done)?(q.ok?'ok':'no'):i===G.i?'now':''}"></i>`).join('');
+const stat=()=>`<span>${G.score} pts</span><span class="${G.streak>1?'hot':''}">Streak ${G.streak}</span>`;
+function ansUI(q){
+  if(q.kind==='mcq')return`<div class="opts">${q.opts.map((s,i)=>`<button class="opt" data-v="${s}"><kbd>${i+1}</kbd>${s}</button>`).join('')}</div>`;
+  if(q.kind==='num')return`<form class="tf" id="tf"><input id="ti" inputmode="decimal" autocomplete="off" aria-label="Your answer" placeholder="Your answer"><button class="go">Check</button></form>`;
+  if(q.kind==='nums')return`<form class="tf3" id="tf">${[0,1,2].map(i=>`<input class="tin" inputmode="numeric" autocomplete="off" aria-label="Multiple ${i+1}" placeholder="?">`).join('')}<button class="go">Check</button></form>`;
+  return`<div class="tiles">${q.tiles.map(n=>`<button class="tile" data-n="${n}" aria-pressed="false">${n}</button>`).join('')}</div><p class="tnote">Tap every correct number, then press Check.</p><div class="row"><button class="go" id="pickgo">Check</button></div>`
+}
+function showQ(){
+  const q=G.qs[G.i];G.hint=false;G.done=false;G.sel=new Set();
+  const big=q.big?val(q.big)('pre'):'';
+  $('#game').innerHTML=`<div class="card">
+<div class="gbar"><button class="link" id="quit">← Levels</button><div class="dots" id="dots">${dots()}</div><div class="gstat" id="gstat">${stat()}</div></div>
+<p class="ask${q.big?'':' lg'}">${q.ask}</p>
+${q.big?`<div class="bignum${String(big).replace(/<[^>]+>/g,'').length>9?' sm':''}" id="gnum">${big}</div>`:''}
+${q.vis?`<div class="hill" id="gvis">${q.vis('pre')}</div>`:''}
+<div id="ans">${ansUI(q)}</div>
+<div class="row"><button class="ghost" id="hint">${q.hintLabel||'Hint'} (half points)</button></div>
+<div class="fb" id="fb" aria-live="polite"></div></div>`;
+  q.place&&q.place('pre');
+  const fi=$('#tf input');if(fi)fi.focus({preventScroll:true})
+}
+function hint(){
+  if(G.done||G.hint)return;G.hint=true;const q=G.qs[G.i];
+  if(q.big)$('#gnum').innerHTML=val(q.big)('hint');
+  if(q.vis){$('#gvis').innerHTML=q.vis('hint');q.place&&q.place('hint')}
+  const h=$('#hint');h.disabled=true;h.textContent='Hint used';
+  $('#fb').className='fb hint';$('#fb').innerHTML=`<p>${q.hint}</p>`
+}
+const num=s=>{const x=parseFloat(String(s).replace(/[,\s$]/g,''));return String(s).trim()&&isFinite(x)?x:null};
+function submit(v){
+  if(G.done)return;const q=G.qs[G.i];let ok,extra='';
+  if(q.kind==='mcq'){
+    ok=v===q.answer;
+    $$('.opt').forEach(b=>{b.disabled=true;if(b.dataset.v===q.answer)b.classList.add('right');else if(b.dataset.v===v)b.classList.add('wrong')});
+  }else if(q.kind==='num'){
+    const x=num($('#ti').value);if(x===null)return;ok=Math.abs(x-q.answer)<1e-6;
+    const i=$('#ti');i.disabled=true;i.classList.add(ok?'right':'wrong');$('#tf button').disabled=true;
+  }else if(q.kind==='nums'){
+    const ins=$$('.tin'),xs=ins.map(i=>num(i.value));if(xs.some(x=>x===null))return;
+    ok=true;ins.forEach((inp,j)=>{const g=xs[j]===q.answer[j];if(!g)ok=false;inp.disabled=true;inp.classList.add(g?'right':'wrong')});$('#tf button').disabled=true;
+  }else{
+    if(!G.sel.size)return;const A=new Set(q.answer);let found=0;
+    $$('.tile').forEach(b=>{const n=+b.dataset.n,s=G.sel.has(n),c=A.has(n);b.disabled=true;b.classList.remove('sel');if(s&&c){b.classList.add('right');found++}else if(s)b.classList.add('wrong');else if(c)b.classList.add('missed')});
+    ok=found===A.size&&G.sel.size===A.size;$('#pickgo').disabled=true;
+    if(!ok)extra=`You found ${found} of ${A.size}${G.sel.size>found?`, with ${G.sel.size-found} extra`:''}. `;
+  }
+  G.done=true;q.ok=ok;let p=0;
+  if(ok){G.streak++;G.best=Math.max(G.best,G.streak);G.correct++;p=q.pts||10;if(G.hint)p=Math.ceil(p/2);p+=Math.min(G.streak-1,5)*2;G.score+=p;S.pts+=p;save();head()}
+  else{G.streak=0;G.wrong.push(q)}
+  $('#hint').disabled=true;$('#dots').innerHTML=dots();$('#gstat').innerHTML=stat();
+  if(q.big)$('#gnum').innerHTML=val(q.big)('done');
+  if(q.vis){$('#gvis').innerHTML=q.vis('done');q.place&&q.place('done')}
+  q.after&&q.after();
+  const fb=$('#fb');fb.className='fb '+(ok?'good':'bad');
+  fb.innerHTML=`<p class="verdict">${ok?pick(['Spot on!','Nice work!','You got it!','Brilliant!','Super!'])+` +${p} points${G.streak>2?` · ${G.streak} in a row`:''}`:`Not quite. ${extra}The answer is ${q.ansText}.`}</p><p>${q.explain}</p><button class="go" id="next">${G.i<G.qs.length-1?'Next question':'See my results'}</button>`;
+  $('#next').focus({preventScroll:true});fb.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'})
+}
+function end(){
+  show('end');const n=G.qs.length,c=G.correct,st=c>=9?3:c>=7?2:c>=5?1:0,k=G.w+':'+G.L.id;
+  if(st>(S.best[k]||0)){S.best[k]=st;save()}
+  const r1=rankOf(S.pts),T=['Keep going!','Good effort!','Great work!','Superstar round!'];
+  $('#end').innerHTML=`<div class="card end"><p class="small">${W[G.w].name} · ${G.L.name}</p><h1>${T[st]}</h1>
+<div class="bigstars">${[0,1,2].map(i=>star(i<st,56)).join('')}</div>
+<div class="stats"><div><b>${c}/${n}</b><span>correct</span></div><div><b>+${G.score}</b><span>points</span></div><div><b>${G.best}</b><span>best streak</span></div></div>
+${r1>G.r0?`<p class="newrank">New rank: ${RANKS[r1][1]}!</p>`:''}
+${G.wrong.length?`<h2 style="margin-top:1.2em">The tricky ones</h2><ul class="review">${G.wrong.map(q=>`<li><span>${q.review}</span><b>${q.ansText}</b></li>`).join('')}</ul>`:'<p class="newrank">Perfect round, no mistakes! Try a harder level.</p>'}
+<div class="row"><button class="go" id="again">Play again</button><button class="ghost" id="tolevels">Pick another level</button></div></div>`
+}
+function reset(el){
+  if(el.dataset.c){S={pts:0,best:{}};save();head();home();el.textContent='Reset points';delete el.dataset.c}
+  else{el.dataset.c='1';el.textContent='Tap again to reset all points and stars'}
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('button');if(!el)return;const d=el.dataset;
+  if(d.go)return home();
+  if(d.world)return openWorld(d.world);
+  if(d.sub)return setSub(d.sub);
+  if(d.l)return setLearn(d.l);
+  if(d.fa){FA=+d.fa;return drawGrid()}
+  if(d.co){CO=d.co;return newCol()}
+  if(d.fb){FB=+d.fb;return drawGrid()}
+  if(d.lv)return start(d.lv);
+  if(el.classList.contains('opt'))return submit(d.v);
+  if(el.classList.contains('tile')){if(G.done)return;const n=+d.n;G.sel.has(n)?G.sel.delete(n):G.sel.add(n);el.classList.toggle('sel');el.setAttribute('aria-pressed',G.sel.has(n));return}
+  switch(el.id){
+    case'cnext':CK++;drawCol();break;
+    case'call':CK=cSteps().length;drawCol();break;
+    case'cnew':newCol();break;
+    case'bnew':BA=rnd(100,999);BB=pick2();drawBox();break;
+    case'fminus':FN=Math.max(2,FN-1);drawBeds();break;
+    case'fplus':FN=Math.min(60,FN+1);drawBeds();break;
+    case'hint':hint();break;
+    case'pickgo':submit();break;
+    case'next':G.i++;G.i<G.qs.length?showQ():end();break;
+    case'quit':case'tolevels':openWorld(G.w,'play');break;
+    case'again':curW=G.w;start(G.L.id);break;
+    case'reset':reset(el);break
+  }
+});
+document.addEventListener('change',e=>{if(e.target.id==='typ')TYPE=e.target.checked});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='tf')submit()});
+document.addEventListener('keydown',e=>{if(G&&!$('#game').hidden&&!G.done&&G.qs[G.i].kind==='mcq'&&/^[1-4]$/.test(e.key)){const b=$$('.opt')[e.key-1];b&&b.click()}});
+head();home()
+}
+</script>
+</body>
+</html>
